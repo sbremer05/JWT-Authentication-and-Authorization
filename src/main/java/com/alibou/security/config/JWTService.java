@@ -11,7 +11,15 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
-    private static final String SECRET_KEY = System.getenv("SECRET_KEY");
+    private static final String SECRET_KEY = loadSecretKey();
+
+    private static String loadSecretKey() {
+        String key = System.getenv("SECRET_KEY");
+        if(key == null || key.isBlank()) {
+            throw new IllegalStateException("SECRET_KEY environment variable is not set.");
+        }
+        return key;
+    }
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
